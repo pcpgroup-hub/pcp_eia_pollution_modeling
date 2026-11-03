@@ -8,5 +8,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install numpy (used by the Gauss screening tests)
+        run: python -m pip install numpy
       - name: Unit tests (pure-Python core, no QGIS needed)
         run: python -m unittest discover -s pcp_eia_pollution_modeling/tests -t .
