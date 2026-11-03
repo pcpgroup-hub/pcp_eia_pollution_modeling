@@ -4,7 +4,7 @@ qgisMinimumVersion=4.0
 qgisMaximumVersion=4.99
 description=Run supervised air and water dispersion models (AERMOD, QUAL2Kw) from QGIS for environmental impact assessment, with expert sign-off and an audit trail.
 about=PCP-EIA Pollution Modeling is an open-source framework that lets an expert, and the expert's own AI assistant, run pre-integrated environmental models inside QGIS under supervision. Every step is a Processing algorithm with a supervision level: A runs freely, B needs the expert's confirmation in the QGIS window, C is locked and needs a recorded reason to override. Each run writes a tamper-evident audit log. Models are declared in model cards (JSON), so other teams can add models. First models: AERMOD (US EPA, air) and QUAL2Kw (Washington State Ecology, surface water). A Vietnam rules layer (QCVN thresholds, Circular 95/2025/TT-BNNMT on river load capacity) is planned. The plugin does NOT bundle any model binary: download AERMOD from US EPA and QUAL2Kw from Washington State Ecology yourself and set their paths in Processing settings.
-version=0.2.0
+version=0.2.2
 author=Nguyễn Thị Thuý Nga
 email=thuynga.moitruong@gmail.com
 ; TODO before upload: replace with the real public repository, tracker and homepage URLs (the repository checks that they work)
@@ -16,7 +16,11 @@ category=Analysis
 experimental=True
 deprecated=False
 hasProcessingProvider=yes
-changelog=0.2.0
+changelog=0.2.2
+    Qt6 compliance: fully qualified enums (Type.Double, DataType.Numeric, GridStyle, AnnotationPosition, BorderSide, DisplayMode, ExportResult, StandardButton)
+    0.2.1
+    Security scan fixes: workbook XML is read only after rejecting DTD/entity declarations; plugin unload logs instead of silently ignoring errors
+    0.2.0
     Air: scenario table runner with colour-band maps, threshold lines, US EPA AQI classes, print layout, method sheet per scenario
     Water: QUAL2Kw bridge (build Reach and Point Sources tables, import results onto the river)
     VN-2000 TM-3 reprojection by province (Thong tu 973/2001/TT-TCDC)

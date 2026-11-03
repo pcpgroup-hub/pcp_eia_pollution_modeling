@@ -47,13 +47,13 @@ class RunScenarios(EiaAlgorithm):
         self.addParameter(QgsProcessingParameterFeatureSource("SOURCES", "Source / stack points", [Qgis.ProcessingSourceType.VectorPoint]))
         for key, label in (("HEIGHT", "Stack height field (m)"), ("TEMP", "Exit temperature field (deg C)"),
                            ("VEL", "Exit velocity field (m/s)"), ("DIAM", "Stack diameter field (m)")):
-            self.addParameter(QgsProcessingParameterField(key, label, parentLayerParameterName="SOURCES", type=QgsProcessingParameterField.Numeric))
+            self.addParameter(QgsProcessingParameterField(key, label, parentLayerParameterName="SOURCES", type=QgsProcessingParameterField.DataType.Numeric))
         self.addParameter(QgsProcessingParameterFeatureSource("RECEPTORS", "Receptor points", [Qgis.ProcessingSourceType.VectorPoint]))
         self.addParameter(QgsProcessingParameterFeatureSource("BOUNDARY", "Project boundary", [Qgis.ProcessingSourceType.VectorPolygon, Qgis.ProcessingSourceType.VectorLine], optional=True))
         self.addParameter(QgsProcessingParameterCrs("CRS", "Model CRS (UTM, metres)"))
         self.addParameter(QgsProcessingParameterEnum("STYLE", "Layout style", ["Simple", "Framed"], defaultValue=0))
-        self.addParameter(QgsProcessingParameterNumber("DPI", "Resolution (dpi)", QgsProcessingParameterNumber.Integer, 150, minValue=72, maxValue=600))
-        self.addParameter(QgsProcessingParameterNumber("PIXEL", "Interpolation cell size (m)", QgsProcessingParameterNumber.Double, 100, minValue=1))
+        self.addParameter(QgsProcessingParameterNumber("DPI", "Resolution (dpi)", QgsProcessingParameterNumber.Type.Integer, 150, minValue=72, maxValue=600))
+        self.addParameter(QgsProcessingParameterNumber("PIXEL", "Interpolation cell size (m)", QgsProcessingParameterNumber.Type.Double, 100, minValue=1))
         from qgis.core import QgsProcessingParameterString
         self.addParameter(QgsProcessingParameterString("ONLY", "Only these ids (space or comma separated; empty = all rows)", "", optional=True))
         self.addParameter(QgsProcessingParameterFolderDestination("OUTPUT_DIR", "Output folder"))

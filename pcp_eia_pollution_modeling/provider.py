@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from qgis.core import QgsProcessingProvider
+from qgis.core import Qgis, QgsMessageLog, QgsProcessingProvider
 
 SETTING_AERMOD = "EIA_AERMOD_PATH"
 SETTING_QUAL2KW = "EIA_QUAL2KW_PATH"
@@ -46,8 +46,8 @@ class EiaProvider(QgsProcessingProvider):
 
             ProcessingConfig.removeSetting(SETTING_AERMOD)
             ProcessingConfig.removeSetting(SETTING_QUAL2KW)
-        except Exception:
-            pass
+        except Exception as exc:  # unloading must never raise; record why and carry on
+            QgsMessageLog.logMessage("Could not remove settings on unload: %s" % exc, "PCP-EIA", Qgis.Warning)
 
     def loadAlgorithms(self):
         from .algorithms.check_setup import CheckModelSetup

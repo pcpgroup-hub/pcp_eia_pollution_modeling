@@ -26,13 +26,13 @@ class MakeReceptorGrid(EiaAlgorithm):
                                                               [Qgis.ProcessingSourceType.VectorPoint]))
         self.addParameter(QgsProcessingParameterCrs("CRS", "Model CRS (UTM, metres), e.g. EPSG:32648 or 32649"))
         self.addParameter(QgsProcessingParameterNumber("RADIUS", "Distance around sources (m)",
-                                                       QgsProcessingParameterNumber.Double, 5000, minValue=100))
+                                                       QgsProcessingParameterNumber.Type.Double, 5000, minValue=100))
         self.addParameter(QgsProcessingParameterNumber("SPACING", "Grid spacing (m)",
-                                                       QgsProcessingParameterNumber.Double, 100, minValue=1))
+                                                       QgsProcessingParameterNumber.Type.Double, 100, minValue=1))
         self.addParameter(QgsProcessingParameterNumber("INNER_RADIUS", "Fine inner grid: distance around sources (m, 0 = off)",
-                                                       QgsProcessingParameterNumber.Double, 0, minValue=0))
+                                                       QgsProcessingParameterNumber.Type.Double, 0, minValue=0))
         self.addParameter(QgsProcessingParameterNumber("INNER_SPACING", "Fine inner grid: spacing (m)",
-                                                       QgsProcessingParameterNumber.Double, 100, minValue=1))
+                                                       QgsProcessingParameterNumber.Type.Double, 100, minValue=1))
         self.addParameter(QgsProcessingParameterFeatureSink("OUTPUT", "Receptor grid",
                                                             type=Qgis.ProcessingSourceType.VectorPoint))
 

@@ -24,11 +24,11 @@ class MakeTestAermet(EiaAlgorithm):
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFile("MET", "Hourly meteorology CSV (with Stability_Class column)", extension="csv"))
-        self.addParameter(QgsProcessingParameterNumber("YEAR", "Year", QgsProcessingParameterNumber.Integer, 2024, minValue=1950, maxValue=2100))
-        self.addParameter(QgsProcessingParameterNumber("LAT", "Latitude (deg)", QgsProcessingParameterNumber.Double, 11.3))
-        self.addParameter(QgsProcessingParameterNumber("LON", "Longitude (deg)", QgsProcessingParameterNumber.Double, 108.8))
+        self.addParameter(QgsProcessingParameterNumber("YEAR", "Year", QgsProcessingParameterNumber.Type.Integer, 2024, minValue=1950, maxValue=2100))
+        self.addParameter(QgsProcessingParameterNumber("LAT", "Latitude (deg)", QgsProcessingParameterNumber.Type.Double, 11.3))
+        self.addParameter(QgsProcessingParameterNumber("LON", "Longitude (deg)", QgsProcessingParameterNumber.Type.Double, 108.8))
         self.addParameter(QgsProcessingParameterString("STATION", "Station id (digits)", "99999"))
-        self.addParameter(QgsProcessingParameterNumber("Z0", "Surface roughness (m)", QgsProcessingParameterNumber.Double, 0.1, minValue=0.001))
+        self.addParameter(QgsProcessingParameterNumber("Z0", "Surface roughness (m)", QgsProcessingParameterNumber.Type.Double, 0.1, minValue=0.001))
         self.addParameter(QgsProcessingParameterFolderDestination("OUTDIR", "Output folder"))
         self.addOutput(QgsProcessingOutputFile("SFC", "Surface file"))
         self.addOutput(QgsProcessingOutputFile("PFL", "Profile file"))

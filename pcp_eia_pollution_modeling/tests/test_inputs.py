@@ -60,6 +60,24 @@ if __name__ == "__main__":
 
 
 class TestQual2kwBridge(unittest.TestCase):
+    def test_workbook_xml_with_dtd_is_refused(self):
+        import io
+        import zipfile
+        import tempfile
+        import os
+        from pcp_eia_pollution_modeling.core import qual2kw_io as q
+        evil = b'<?xml version="1.0"?><!DOCTYPE x [<!ENTITY a "aaaa">]><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"/>'
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            z.writestr("xl/workbook.xml", evil)
+            z.writestr("xl/_rels/workbook.xml.rels", b"<Relationships/>")
+        d = tempfile.mkdtemp()
+        path = os.path.join(d, "evil.xlsx")
+        with open(path, "wb") as f:
+            f.write(buf.getvalue())
+        with self.assertRaises(ValueError):
+            q.read_wq_output_xlsx(path)
+
     def test_reaches_and_chainage(self):
         from pcp_eia_pollution_modeling.core import qual2kw_io as q
         pts = [(0.0, 0.0), (10000.0, 0.0)]

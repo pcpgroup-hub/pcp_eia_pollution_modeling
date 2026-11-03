@@ -33,14 +33,14 @@ class HourlyScreening(EiaAlgorithm):
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFeatureSource("SOURCES", "Source / stack points", [Qgis.ProcessingSourceType.VectorPoint]))
         for key, label in _FIELDS:
-            self.addParameter(QgsProcessingParameterField(key, label, parentLayerParameterName="SOURCES", type=QgsProcessingParameterField.Numeric))
+            self.addParameter(QgsProcessingParameterField(key, label, parentLayerParameterName="SOURCES", type=QgsProcessingParameterField.DataType.Numeric))
         self.addParameter(QgsProcessingParameterFeatureSource("RECEPTORS", "Receptor points", [Qgis.ProcessingSourceType.VectorPoint]))
         self.addParameter(QgsProcessingParameterCrs("CRS", "Model CRS (UTM, metres)"))
         self.addParameter(QgsProcessingParameterFile("MET", "Hourly meteorology CSV (AERMET surface file as CSV)", extension="csv"))
         self.addParameter(QgsProcessingParameterEnum("STAT", "Result", _STATS, defaultValue=0))
         self.addParameter(QgsProcessingParameterString("MONTHS", "Months to use (e.g. '12 1 2' for a season; empty = all)", "", optional=True))
-        self.addParameter(QgsProcessingParameterNumber("MINWS", "Minimum wind speed (m/s); slower hours are raised to it", QgsProcessingParameterNumber.Double, 1.0, minValue=0.1))
-        self.addParameter(QgsProcessingParameterNumber("MEANDER", "Wind-direction meander (0 = off, 1 = standard sigma-theta by stability class, 2 = double): widens each hour's plume sideways so that few hours do not give separate thin rays", QgsProcessingParameterNumber.Double, 1.0, minValue=0.0, maxValue=4.0))
+        self.addParameter(QgsProcessingParameterNumber("MINWS", "Minimum wind speed (m/s); slower hours are raised to it", QgsProcessingParameterNumber.Type.Double, 1.0, minValue=0.1))
+        self.addParameter(QgsProcessingParameterNumber("MEANDER", "Wind-direction meander (0 = off, 1 = standard sigma-theta by stability class, 2 = double): widens each hour's plume sideways so that few hours do not give separate thin rays", QgsProcessingParameterNumber.Type.Double, 1.0, minValue=0.0, maxValue=4.0))
         self.addParameter(QgsProcessingParameterString("LIMIT", "Limit to compare with (ug/m3, optional)", "", optional=True))
         self.addParameter(QgsProcessingParameterFeatureSink("OUTPUT", "Concentration (ug/m3)", type=Qgis.ProcessingSourceType.VectorPoint))
         self.addOutput(QgsProcessingOutputString("MET_SUMMARY", "Meteorology summary"))

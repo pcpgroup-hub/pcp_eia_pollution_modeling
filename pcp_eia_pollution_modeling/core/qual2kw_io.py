@@ -10,7 +10,7 @@ import csv
 import math
 import re
 import zipfile
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 - every parse below is preceded by the _no_dtd() guard
 
 _M = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 _R = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
@@ -133,9 +133,23 @@ def _num(x):
         return None
 
 
+def _no_dtd(head):
+    """Refuse XML that declares a DTD or entities (the basis of XML-expansion attacks).
+    A genuine Excel workbook never contains either."""
+    low = head.lower()
+    if b"<!doctype" in low or b"<!entity" in low:
+        raise ValueError("The workbook XML contains a DTD or entity declaration; refusing to read it")
+
+
+def _xml_root(z, name):
+    data = z.read(name)
+    _no_dtd(data)
+    return ET.fromstring(data)  # nosec B314 - DTD/entities rejected above
+
+
 def _sheet_path(z, name):
-    wb = ET.fromstring(z.read("xl/workbook.xml"))
-    rels = {r.get("Id"): r.get("Target") for r in ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))}
+    wb = _xml_root(z, "xl/workbook.xml")
+    rels = {r.get("Id"): r.get("Target") for r in _xml_root(z, "xl/_rels/workbook.xml.rels")}
     for s in wb.find(_M + "sheets"):
         if s.get("name") == name:
             t = rels[s.get(_R + "id")].lstrip("/")
@@ -158,10 +172,12 @@ def read_wq_output_xlsx(path, sheet="WQ Output", max_rows=5000):
     sp = _sheet_path(z, sheet)
     strings = []
     if "xl/sharedStrings.xml" in z.namelist():
-        for si in ET.fromstring(z.read("xl/sharedStrings.xml")).iter(_M + "si"):
+        for si in _xml_root(z, "xl/sharedStrings.xml").iter(_M + "si"):
             strings.append("".join(t.text or "" for t in si.iter(_M + "t")))
     table = []
-    for _, el in ET.iterparse(z.open(sp), events=("end",)):
+    with z.open(sp) as head_f:
+        _no_dtd(head_f.read(65536))  # a DTD can only appear at the start of the document
+    for _, el in ET.iterparse(z.open(sp), events=("end",)):  # nosec B314 - DTD rejected above
         if el.tag == _M + "row":
             cells = {}
             for c in el:

@@ -27,10 +27,10 @@ def _qt_ask(level, title, summary, need_reason):
             None, "Level C override: %s" % title, summary + "\n\nReason (recorded in the audit log):"
         )
         return (text.strip(), True) if ok and text.strip() else (None, False)
-    box = QMessageBox(QMessageBox.Question, "Expert approval: %s" % title, summary)
-    box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-    box.setDefaultButton(QMessageBox.No)
-    return ("", box.exec() == QMessageBox.Yes)
+    box = QMessageBox(QMessageBox.Icon.Question, "Expert approval: %s" % title, summary)
+    box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+    box.setDefaultButton(QMessageBox.StandardButton.No)
+    return ("", box.exec() == QMessageBox.StandardButton.Yes)
 
 
 def require(level, title, summary, ask=_qt_ask):

@@ -35,21 +35,21 @@ class GaussScreening(EiaAlgorithm):
                                                               [Qgis.ProcessingSourceType.VectorPoint]))
         for key, label in _FIELDS:
             self.addParameter(QgsProcessingParameterField(key, label, parentLayerParameterName="SOURCES",
-                                                          type=QgsProcessingParameterField.Numeric))
+                                                          type=QgsProcessingParameterField.DataType.Numeric))
         self.addParameter(QgsProcessingParameterFeatureSource("RECEPTORS", "Receptor points",
                                                               [Qgis.ProcessingSourceType.VectorPoint]))
         self.addParameter(QgsProcessingParameterCrs("CRS", "Model CRS (UTM, metres)"))
-        self.addParameter(QgsProcessingParameterNumber("WIND", "Wind speed (m/s)", QgsProcessingParameterNumber.Double, 3.0, minValue=0.5))
+        self.addParameter(QgsProcessingParameterNumber("WIND", "Wind speed (m/s)", QgsProcessingParameterNumber.Type.Double, 3.0, minValue=0.5))
         self.addParameter(QgsProcessingParameterNumber("FROM", "Wind blows FROM (degrees, 0 = north)",
-                                                       QgsProcessingParameterNumber.Double, 225, minValue=0, maxValue=360))
+                                                       QgsProcessingParameterNumber.Type.Double, 225, minValue=0, maxValue=360))
         self.addParameter(QgsProcessingParameterString("ROSE", "Wind rose (optional): 16 frequencies, wind FROM N, NNE, ... NNW, in % - if given, the direction above is ignored and the long-term sector average is computed", "", optional=True))
         self.addParameter(QgsProcessingParameterBoolean("ENV", "Highest-value envelope ('1st high'): maximum over many wind directions, speeds and stability classes (overrides direction and rose)", False))
         self.addParameter(QgsProcessingParameterString("DIRS", "Envelope: wind-from directions in degrees (empty = every 2 degrees; with a wind rose, directions whose frequency is below 1% are left out)", "", optional=True))
         self.addParameter(QgsProcessingParameterString("SPEEDS", "Envelope: wind speeds m/s", "1.5 3 5", optional=True))
         self.addParameter(QgsProcessingParameterString("STABS", "Envelope: stability classes (F is left out by default: with a steady plume it overstates values far from the source)", "B D", optional=True))
-        self.addParameter(QgsProcessingParameterNumber("AVGF", "Envelope: averaging-time factor (1 = 1 h; expert may set e.g. 0.4 for 24 h)", QgsProcessingParameterNumber.Double, 1.0, minValue=0.01, maxValue=1.0))
+        self.addParameter(QgsProcessingParameterNumber("AVGF", "Envelope: averaging-time factor (1 = 1 h; expert may set e.g. 0.4 for 24 h)", QgsProcessingParameterNumber.Type.Double, 1.0, minValue=0.01, maxValue=1.0))
         self.addParameter(QgsProcessingParameterEnum("STAB", "Pasquill stability class", _CLASSES, defaultValue=3))
-        self.addParameter(QgsProcessingParameterNumber("AMB", "Ambient temperature (K)", QgsProcessingParameterNumber.Double, 298.0))
+        self.addParameter(QgsProcessingParameterNumber("AMB", "Ambient temperature (K)", QgsProcessingParameterNumber.Type.Double, 298.0))
         self.addParameter(QgsProcessingParameterString("LIMIT", "Limit to compare with (ug/m3, optional)", "", optional=True))
         self.addParameter(QgsProcessingParameterFeatureSink("OUTPUT", "Concentration (ug/m3)", type=Qgis.ProcessingSourceType.VectorPoint))
 

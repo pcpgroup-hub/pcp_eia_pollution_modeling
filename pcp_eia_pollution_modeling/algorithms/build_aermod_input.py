@@ -34,7 +34,7 @@ class BuildAermodInput(EiaAlgorithm):
         self.addParameter(QgsProcessingParameterField("ID", "Source id field (1-8 letters/digits)", parentLayerParameterName="SOURCES"))
         for key, label in _NUM:
             self.addParameter(QgsProcessingParameterField(key, label, parentLayerParameterName="SOURCES",
-                                                          type=QgsProcessingParameterField.Numeric))
+                                                          type=QgsProcessingParameterField.DataType.Numeric))
         self.addParameter(QgsProcessingParameterFeatureSource("RECEPTORS", "Receptor points (model CRS)",
                                                               [Qgis.ProcessingSourceType.VectorPoint]))
         self.addParameter(QgsProcessingParameterCrs("CRS", "Model CRS (UTM, metres)"))
@@ -43,10 +43,10 @@ class BuildAermodInput(EiaAlgorithm):
         self.addParameter(QgsProcessingParameterFile("SURF", "Surface meteorology file (.SFC)"))
         self.addParameter(QgsProcessingParameterFile("PROF", "Profile meteorology file (.PFL)"))
         self.addParameter(QgsProcessingParameterString("SURF_ST", "Surface station id", ""))
-        self.addParameter(QgsProcessingParameterNumber("SURF_YR", "Surface data year", QgsProcessingParameterNumber.Integer, 2020))
+        self.addParameter(QgsProcessingParameterNumber("SURF_YR", "Surface data year", QgsProcessingParameterNumber.Type.Integer, 2020))
         self.addParameter(QgsProcessingParameterString("UA_ST", "Upper-air station id", ""))
-        self.addParameter(QgsProcessingParameterNumber("UA_YR", "Upper-air data year", QgsProcessingParameterNumber.Integer, 2020))
-        self.addParameter(QgsProcessingParameterNumber("BASE", "Profile base elevation (m)", QgsProcessingParameterNumber.Double, 0))
+        self.addParameter(QgsProcessingParameterNumber("UA_YR", "Upper-air data year", QgsProcessingParameterNumber.Type.Integer, 2020))
+        self.addParameter(QgsProcessingParameterNumber("BASE", "Profile base elevation (m)", QgsProcessingParameterNumber.Type.Double, 0))
         self.addParameter(QgsProcessingParameterBoolean("DFAULT", "Use regulatory defaults (DFAULT)", True))
         self.addParameter(QgsProcessingParameterString("TITLE", "Scenario title", "Scenario 1"))
         self.addParameter(QgsProcessingParameterFolderDestination("OUTDIR", "Scenario folder"))
