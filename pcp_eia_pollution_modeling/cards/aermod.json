@@ -1,0 +1,228 @@
+{
+  "_card_version": "0.1",
+  "_status": "draft for expert review; fields containing \"verify\" are unconfirmed",
+  "id": "aermod",
+  "name": "AERMOD (US EPA)",
+  "domain": "air",
+  "version_locked": "26135",
+  "companions": [
+    {
+      "id": "aermet",
+      "version": "26135",
+      "purpose": "meteorology -> SURFFILE + PROFFILE"
+    },
+    {
+      "id": "aermap",
+      "version": "24142",
+      "purpose": "terrain heights/receptor elevations from DEM"
+    },
+    {
+      "id": "bpipprm",
+      "version": "verify",
+      "purpose": "building downwash parameters (only if buildings near stacks)"
+    },
+    {
+      "id": "aersurface",
+      "version": "26135",
+      "purpose": "surface albedo/Bowen/roughness for AERMET (optional)"
+    },
+    {
+      "id": "aerminute",
+      "version": "26135",
+      "purpose": "1/5-minute wind QA for AERMET (US-specific, optional)"
+    }
+  ],
+  "distribution": {
+    "bundled_in_plugin": false,
+    "download_page": "https://www.epa.gov/node/164075",
+    "files": [
+      "aermod_exe.zip",
+      "aermod_source.zip",
+      "aermod_test_cases.zip",
+      "aermod_userguide.pdf"
+    ],
+    "executable_path": {
+      "from": "plugin_settings",
+      "check": "run test case, compare to EPA output"
+    }
+  },
+  "run": {
+    "command": "aermod.exe [input_file] [output_file]",
+    "working_dir": "one folder per run; met files and aermod.inp must be reachable from it",
+    "platform": [
+      "windows",
+      "linux"
+    ]
+  },
+  "inputs": {
+    "control_file": "aermod.inp",
+    "pathways": {
+      "CO": {
+        "required": [
+          "MODELOPT",
+          "AVERTIME",
+          "POLLUTID"
+        ]
+      },
+      "SO": {
+        "required": [
+          "LOCATION",
+          "SRCPARAM",
+          "SRCGROUP"
+        ]
+      },
+      "RE": {
+        "required": [
+          "GRIDCART or GRIDPOLR or DISCCART"
+        ]
+      },
+      "ME": {
+        "required": [
+          "SURFFILE",
+          "PROFFILE",
+          "SURFDATA",
+          "UAIRDATA"
+        ]
+      },
+      "OU": {
+        "required": [
+          "RECTABLE or MAXTABLE or PLOTFILE"
+        ]
+      }
+    },
+    "coordinate_system": "UTM metres (project in UTM zone 48N/49N; convert from VN-2000)",
+    "source_types": {
+      "regulatory": [
+        "POINT",
+        "POINTHOR",
+        "POINTCAP",
+        "VOLUME",
+        "AREA",
+        "AREAPOLY",
+        "AREACIRC",
+        "OPENPIT",
+        "LINE",
+        "BUOYLINE"
+      ],
+      "alpha_nonregulatory": [
+        "RLINE",
+        "RLINEXT",
+        "SWPOINT"
+      ]
+    },
+    "emissions": {
+      "unit": "g/s (point), g/s/m2 (area), g/s/m (line)",
+      "factors_from": [
+        "AP-42",
+        "project measurements"
+      ]
+    },
+    "meteorology": {
+      "format": "AERMET output (SURFFILE + PROFFILE), hourly, >=1 year (5 years recommended in US practice)",
+      "provided_by": "expert_per_project",
+      "routes": [
+        "station_obs_via_AERMET",
+        "prognostic_model_via_MMIF"
+      ]
+    },
+    "terrain": {
+      "via": "AERMAP",
+      "input": "DEM"
+    },
+    "nox_to_no2": {
+      "tiers": [
+        "ARM2",
+        "OLM",
+        "PVMRM"
+      ],
+      "default_for_screening": "full conversion (Tier 1)"
+    }
+  },
+  "options": {
+    "regulatory_default": {
+      "keyword": "DFAULT",
+      "rule": "always on; ALPHA/BETA options blocked"
+    },
+    "beta_options_in_26135": "none"
+  },
+  "outputs": {
+    "main": "AERMOD.OUT",
+    "tables": [
+      "MAXTABLE",
+      "RECTABLE"
+    ],
+    "files": [
+      "PLOTFILE",
+      "POSTFILE",
+      "MAXIFILE",
+      "SUMFILE",
+      "ERRORFILE"
+    ],
+    "to_qgis": {
+      "as": [
+        "point_layer_of_receptors",
+        "raster_of_concentration"
+      ],
+      "crs": "project_crs"
+    }
+  },
+  "compare_with": {
+    "ambient": {
+      "qcvn": "QCVN 05:2023/BTNMT",
+      "averaging": [
+        "1h",
+        "8h",
+        "24h",
+        "year"
+      ],
+      "note": "map AVERTIME to QCVN periods"
+    },
+    "stack": {
+      "qcvn": "QCVN 19:2024/BTNMT",
+      "note": "older reports still use QCVN 19:2009 with Kp, Kv"
+    },
+    "add_background": "measured baseline concentration at site (required to judge compliance, not given by AERMOD)"
+  },
+  "limits": [
+    "steady-state plume model; not for complex wind/terrain beyond what AERMOD handles (verify UG recommended range)",
+    "US regulatory range ~50 km  # verify in UG",
+    "needs hourly met data; results as good as met and emission inputs",
+    "short-term (1h) peaks and annual means come from different met subsets; report which"
+  ],
+  "supervision": {
+    "read_project_layers": "A",
+    "build_sources_from_layer": "A",
+    "propose_parameters": "A",
+    "apply_parameters": "B",
+    "choose_met_data": "B",
+    "run_model": "B",
+    "options_DFAULT": "C",
+    "qcvn_thresholds": "C",
+    "alpha_options": "C"
+  },
+  "validation": {
+    "test_cases": "aermod_test_cases.zip",
+    "accept_when": "numeric match to EPA reference within tolerance"
+  },
+  "report_hooks": {
+    "methods_text": [
+      "model name+version",
+      "options (DFAULT)",
+      "met data source+period",
+      "terrain",
+      "receptor grid",
+      "sources"
+    ],
+    "tables": [
+      "max concentration per averaging time",
+      "compare with QCVN",
+      "contributor sources"
+    ],
+    "figures": [
+      "isopleth map",
+      "wind rose",
+      "domain+receptors",
+      "met time series"
+    ]
+  }
+}

@@ -1,0 +1,265 @@
+{
+  "_card_version": "0.2",
+  "_status": "draft for expert review; fields containing \"verify\" are unconfirmed",
+  "id": "qual2kw",
+  "name": "QUAL2Kw (Washington State Dept. of Ecology; lineage QUAL2E -> QUAL2K -> QUAL2Kw)",
+  "domain": "surface_water",
+  "versions": {
+    "v5_1": {
+      "file": "qual2kw51b52a07.zip",
+      "workbook": "qual2kw51b52a07.xls",
+      "flow": "steady",
+      "extras": "genetic-algorithm auto-calibration (PIKAIA); Fortran exe qual2kw5.exe; manuals included"
+    },
+    "v6_0": {
+      "file": "qual2kw60b08a07.xlsm",
+      "flow": "kinematic-wave non-steady, simulation of several days up to 1 year (control sheet has 'Simulation mode' = Repeating diel / dynamic; 'Number of days for the simulation period')",
+      "extras": "COD, Total N, Total P, Total CBODu columns in 'WQ Output'; hyporheic and surface transient storage options; sediment diagenesis option"
+    },
+    "xqual2kw": {
+      "file": "xqual2kw*.xls/.xlsm",
+      "purpose": "calibrates against several surveys at once"
+    },
+    "version_locked": "v6.0 for new projects (has COD/TN/TP outputs and non-steady option); v5.1 accepted for steady cases",
+    "reason": "TT 95/2025 needs COD, BOD5, TN, TP; v6 writes COD, Total N, Total P directly"
+  },
+  "distribution": {
+    "bundled_in_plugin": false,
+    "download_page": "https://ecology.wa.gov/programs/eap/models.html",
+    "user_installs": true
+  },
+  "platform": {
+    "interface": "Excel workbook with VBA macros (inputs, run, charts, outputs)",
+    "engine": {
+      "vba": "default; computes inside Excel",
+      "fortran": "qual2kw5.exe (v5.1) optional; must sit in the same folder as the .xls and keep its name; results identical to VBA, faster"
+    },
+    "data_file": ".q2k plain-text file written at every run (name from cell B9 of sheet QUAL2K; extension added automatically); reopened with 'Open Old File'",
+    "q2k_header_example": ">>>>>>>>>>>> QUAL2Kw version 5 input data <<<<<<<<<<<<v51b52",
+    "os": [
+      "windows"
+    ],
+    "requires": [
+      "Microsoft Excel, macros enabled"
+    ],
+    "linux_mac": "not supported for the run step; QGIS-side preparation and result reading run anywhere",
+    "verify": [
+      "whether qual2kw5.exe can be started from the command line on a .q2k file without Excel (strings show dynamic.txt and message.dat; not tested)",
+      "v6 Fortran exe: confirmed to exist (qual2kw6.exe, 1,821,184 bytes, PE32 console i386, banner 'QUAL2KW version 6.0', sha256 24a7d85e...c6); whether it takes a .q2k path on the command line is NOT visible in its strings, needs a run on Windows"
+    ]
+  },
+  "integration": {
+    "routes": {
+      "A_file_route": "plugin writes a .q2k (text) -> expert opens it in Excel with 'Open Old File' -> Run -> plugin reads result sheets",
+      "B_workbook_route": "plugin fills the pale-blue/yellow input cells of the workbook with openpyxl/xlwings -> expert runs macro",
+      "C_com_route": "on Windows the plugin drives Excel via COM (xlwings) to press Run"
+    },
+    "default": "A_file_route_or_B_workbook_route",
+    "collect": "read 'WQ Output' (distance-wise table, one row per reach/element) and diel sheets; draw profiles in QGIS",
+    "export": "xlsx for the report (the workbook itself or a plugin-made summary)"
+  },
+  "inputs": {
+    "control_sheet_QUAL2K": {
+      "fields": [
+        "river_name",
+        "saved_file_name",
+        "directory",
+        "month/day/year",
+        "time_zone_vs_UTC",
+        "daylight_saving",
+        "calculation_step_min",
+        "simulation_days",
+        "simulation_mode",
+        "selected_output_date",
+        "solution_method_integration (Euler|RK4|adaptive-Fortran-only)",
+        "solution_method_pH (Brent)",
+        "hyporheic_transient_storage",
+        "surface_transient_storage",
+        "conduction_to_sediments",
+        "state_variables (All|subset)",
+        "sediment_diagenesis",
+        "alkalinity_change_from_nutrients",
+        "dynamic_output_option",
+        "print_interval"
+      ]
+    },
+    "reach_geometry": {
+      "from": "qgis_line_layer",
+      "fields": [
+        "reach_name",
+        "length_km",
+        "elevation_up/down",
+        "width_or_rating",
+        "manning_n",
+        "shade/latitude_longitude"
+      ]
+    },
+    "headwater": {
+      "flow": null,
+      "temperature": null,
+      "conductivity": null,
+      "DO": null,
+      "CBODslow": null,
+      "CBODfast": null,
+      "organicN": null,
+      "NH4": null,
+      "NO3": null,
+      "organicP": null,
+      "inorganicP": null,
+      "phytoplankton": null,
+      "detritus": null,
+      "pathogen": null,
+      "generic": null,
+      "alkalinity": null,
+      "pH": null
+    },
+    "point_sources": {
+      "from": "qgis_point_layer",
+      "per": [
+        "km_position",
+        "flow",
+        "temperature",
+        "same quality set"
+      ]
+    },
+    "diffuse_sources": {
+      "from": "qgis_line_layer",
+      "per": [
+        "start_km",
+        "end_km",
+        "flow",
+        "same quality set"
+      ]
+    },
+    "meteorology": {
+      "air_temperature": null,
+      "dew_point": null,
+      "wind": null,
+      "cloud": null,
+      "solar/shade": null,
+      "hourly values": null
+    },
+    "rates": {
+      "defaults_in_workbook": true,
+      "user_override": "B",
+      "auto_calibration": "columns E-G of sheet Rates, genetic algorithm PIKAIA; runtime >= np*(ngen+1) model runs"
+    },
+    "calibration_data": {
+      "observed_wq_profile": "needed; TT 95/2025 Art. 9.5 requires calibration and validation"
+    },
+    "generic_constituent": "optional; if set 'use as COD' = non-carbonaceous non-nitrogenous COD in mgO2/L, oxidised with first-order decay and subtracted from DO"
+  },
+  "state_variables": [
+    "temperature",
+    "conductivity",
+    "inorganic_suspended_solids",
+    "DO",
+    "CBODslow",
+    "CBODfast",
+    "organicN",
+    "NH4",
+    "NO3",
+    "organicP",
+    "inorganicP",
+    "phytoplankton",
+    "detritus",
+    "pathogens",
+    "generic_constituent",
+    "alkalinity",
+    "total_inorganic_carbon",
+    "pH"
+  ],
+  "mapping_to_vn_parameters": {
+    "total_N": "model column 'Total N (ug/L)' (organic N + NH4 + NO3 + nitrite)",
+    "total_P": "model column 'Total P (ugP/L)'",
+    "COD": "v6 column 'COD (mgO2/L)' exists; how it is built from CBODu, detritus and the generic-as-COD option must be read from the v6 documentation",
+    "BOD5": {
+      "not_a_state_variable": true,
+      "inputs": "headwater and sources are given as fast CBOD ~ 1.46 x BOD5 (decay k ~ 0.23 /d, Brown & Barnwell 1985); better to use CBOD5 (carbonaceous part) x 1.46",
+      "outputs": "to report BOD5 from model, convert CBODfast (+ slow share) back with the 5-day relation; expert approves (level B)",
+      "warning": "Vietnamese BOD5 (TCVN/QCVN lab) includes nitrogenous demand unless inhibited; state which one is meant"
+    },
+    "rule": "plugin never silently converts; each conversion is a recorded expert decision"
+  },
+  "outputs": {
+    "main": [
+      "longitudinal profiles per parameter",
+      "hydraulics (flow",
+      "depth",
+      "velocity)",
+      "temperature",
+      "DO",
+      "nutrients",
+      "algae",
+      "pH",
+      "diel min/max/mean"
+    ],
+    "sheets_v6": [
+      "WQ Output (constituent summary, diel mean, per reach with distance km)",
+      "Dyn sheets for dynamic output",
+      "Diel water column / hyporheic / fluxes sheets"
+    ],
+    "to_qgis": {
+      "as": [
+        "line_layer_per_reach_with_attributes",
+        "point_layer_per_element",
+        "chart_profiles"
+      ],
+      "crs": "project_crs"
+    },
+    "to_tt95": "model concentration at segment end replaces Cnn+Lt effects in Ltn formula; exact use of model output in TT 95 Art. 9.3 still open",
+    "report_exports": [
+      "xlsx",
+      "png_profiles"
+    ]
+  },
+  "limits": [
+    "1-D, well mixed vertically and laterally; not for wide/stratified waters",
+    "tidal reach with salinity >= 4 permille: TT 95/2025 demands a model, but QUAL2Kw is not an estuarine hydrodynamic model -> flag; expert decides or uses another model",
+    "v5.1 steady flow; v6 kinematic-wave non-steady only",
+    "needs observed profile data to calibrate/validate",
+    "Windows + Excel only for the run step"
+  ],
+  "supervision": {
+    "read_layers": "A",
+    "build_reach_table": "A",
+    "write_q2k_or_workbook": "B",
+    "set_kinetic_rates": "B",
+    "auto_calibration_run": "B",
+    "choose_version_and_scenario": "B",
+    "run_model": "B",
+    "bod5_cod_conversion": "B",
+    "calibration_acceptance": "B",
+    "qcvn_class_and_formulas": "C"
+  },
+  "validation": {
+    "test_cases": "Boulder Creek example (BC_1987-08-21.q2k and workbook) shipped in the zip",
+    "accept_when": "plugin-prepared input reproduces the shipped example outputs (same reach table, same predicted profiles)",
+    "also": "calibration/validation record attached to the audit trail"
+  },
+  "compare_with": [
+    "vn_tt95_2025_river_load_capacity",
+    "QCVN 08:2023/BTNMT"
+  ],
+  "report_hooks": {
+    "tables": [
+      "segment list (Art. 14)",
+      "Ltn per parameter per scenario",
+      "calibration statistics (observed vs predicted)"
+    ],
+    "figures": [
+      "river map with segments",
+      "longitudinal profiles per parameter",
+      "calibration vs observed",
+      "diel DO"
+    ]
+  },
+  "open_questions": [
+    "Can qual2kw5.exe (or a v6 engine) run from a .q2k file without Excel? If yes, the run step becomes scriptable",
+    "Cell map of each input sheet for route B (needs a pass over the v6 workbook)",
+    "COD derivation in v6 (documentation not in the uploaded files; check Ecology page)",
+    "Does QGIS repository accept a plugin whose model step is Windows-only? (ask QGIS contact)",
+    "Lock v6.0 or v5.1? (proposal: v6.0)",
+    "Acceptability to Vietnamese reviewers of the BOD5/COD conversions"
+  ]
+}

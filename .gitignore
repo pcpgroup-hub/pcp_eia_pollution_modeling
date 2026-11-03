@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.zip
+.DS_Store
+# never commit model binaries or client data
+*.exe
+*.xlsm
+*.plt
+*.sfc
+*.pfl

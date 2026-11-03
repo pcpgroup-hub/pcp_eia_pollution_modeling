@@ -1,0 +1,23 @@
+{
+  "source": "US EPA, 40 CFR Part 58 Appendix G, Table 2 (as amended by 89 FR 16403, 6 March 2024)",
+  "url": "https://www.law.cornell.edu/cfr/text/40/appendix-G_to_part_58",
+  "retrieved": "2026-11-03",
+  "note": "Editable data file. Check it against the current EPA text before use; thresholds change over time. Upper bound of each category in the original unit; the last category is open-ended.",
+  "molar_volume_L_per_mol": 24.45,
+  "categories": [
+    {"vi": "Tốt", "en": "Good", "color": "#00E400"},
+    {"vi": "Trung bình", "en": "Moderate", "color": "#FFFF00"},
+    {"vi": "Không tốt cho nhóm nhạy cảm", "en": "Unhealthy for Sensitive Groups", "color": "#FF7E00"},
+    {"vi": "Không tốt", "en": "Unhealthy", "color": "#FF0000"},
+    {"vi": "Rất không tốt", "en": "Very Unhealthy", "color": "#8F3F97"},
+    {"vi": "Nguy hại", "en": "Hazardous", "color": "#7E0023"}
+  ],
+  "pollutants": {
+    "pm25_24h": {"label": "PM2.5, 24 h", "unit": "ug/m3", "mw": null, "step": 0.1, "upper": [9.0, 35.4, 55.4, 125.4, 225.4]},
+    "pm10_24h": {"label": "PM10, 24 h", "unit": "ug/m3", "mw": null, "step": 1, "upper": [54, 154, 254, 354, 424]},
+    "no2_1h":   {"label": "NO2, 1 h", "unit": "ppb", "mw": 46.0055, "step": 1, "upper": [53, 100, 360, 649, 1249]},
+    "so2_1h":   {"label": "SO2, 1 h", "unit": "ppb", "mw": 64.066, "step": 1, "upper": [35, 75, 185, 304, 604],
+                 "warn": "For 1-h SO2 the EPA table defines AQI values of 200 and above with 24-h SO2, so the upper classes are indicative only."},
+    "co_8h":    {"label": "CO, 8 h", "unit": "ppm", "mw": 28.01, "step": 0.1, "upper": [4.4, 9.4, 12.4, 15.4, 30.4]}
+  }
+}

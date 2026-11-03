@@ -1,0 +1,162 @@
+{
+  "_card_version": "0.1",
+  "_status": "draft for expert review; fields containing \"verify\" are unconfirmed",
+  "id": "vn_tt95_2025_river_load_capacity",
+  "legal_basis": {
+    "document": "Thông tư 95/2025/TT-BNNMT",
+    "issued": "2025-12-31",
+    "in_force_from": "2026-02-15",
+    "supersedes": [
+      "TT 76/2017/TT-BTNMT"
+    ],
+    "legacy_note": "reports dated before 2026-02-15 follow TT 76/2017; plugin flags which regime a project falls under"
+  },
+  "scope": {
+    "water_bodies": [
+      "river",
+      "stream",
+      "canal",
+      "lake",
+      "pond"
+    ],
+    "authority": "publish load capacity: Bộ NN&MT (inter-provincial), UBND tỉnh (intra-provincial)"
+  },
+  "river_segmentation": {
+    "segment_min_length_km": 10,
+    "rules": [
+      "boundary between two adjacent cross-sections, by flow change, water use, protection needs",
+      "tidal reach where salinity >= 4.0 permille intrusion length: one segment",
+      "segments crossing urban, dense residential, industrial parks/clusters, craft villages, heavily loaded or polluted waters, conservation areas: may be one segment",
+      "reach < 10 km and none of the above: merge with adjacent reach or treat as one segment"
+    ]
+  },
+  "parameters": {
+    "mandatory": [
+      "COD",
+      "BOD5",
+      "total_N",
+      "total_P"
+    ],
+    "additional": "set by the competent authority (water-use purpose, QCVN, discharge nature)"
+  },
+  "methods": {
+    "direct": {
+      "use_when": "no wastewater source discharges directly into the segment",
+      "formula": "Ltn = Ltd - Lnn"
+    },
+    "indirect": {
+      "use_when": "wastewater sources discharge into the segment",
+      "formula": "Ltn = Ltd - Lnn - Ltt + NPtd"
+    },
+    "model": {
+      "use_when": [
+        "tidal reach (salinity >= 4.0 permille): model is the ONLY method",
+        "chosen by authority/expert"
+      ]
+    },
+    "unit": "kg/day",
+    "NPtd": "max load lost to in-river transformation; may be omitted if reliable data is missing (Art. 9.4)"
+  },
+  "scenarios": {
+    "base": "mean dry-season flow + max load per QCVN surface-water limit matching current quality class",
+    "by_use": "mean dry-season flow + max load per limit matching planned water-use purpose"
+  },
+  "formulas": {
+    "Ltd": "Cqc * Qs * 86.4      # Cqc mg/L, Qs m3/s",
+    "Lnn": "Cnn * Qs * 86.4",
+    "Lt": "Ct * Qt * 86.4      # point source; Qt = max discharge from monitoring or permit",
+    "Ltt": "Lt + Ld             # point + diffuse",
+    "lake_non_daily_operation": "Mtn = (Cqc - Cnn) * Vh * 1e-3   # kg; Vh = mean dry-season volume m3"
+  },
+  "cqc_selection": {
+    "qcvn": "QCVN 08:2023/BTNMT",
+    "base_scenario": {
+      "current_class_A": "use_A",
+      "current_class_B": "use_B",
+      "current_class_C_or_D": "use_C",
+      "exception": "with treatment ensuring target quality, may use a lower class than current but never lower than C"
+    },
+    "by_use_scenario": "class per planned water use (A, B or C); same exception, never lower than C"
+  },
+  "data_requirements": {
+    "Qs": "mean dry-season flow from hydro-meteorological observations (Art. 10.2)",
+    "river_water_quality": {
+      "Cnn": "mean of >= 10 samples in dry season, frequency fitting flow variation; use agency monitoring data if available",
+      "sampling_section": {
+        "direct": "last cross-section of segment",
+        "indirect": "first cross-section of segment"
+      }
+    },
+    "wastewater": {
+      "Ct": "mean of >= 4 samples, >= 1 day per sample (no wet/dry distinction); use legal monitoring data if available",
+      "Qt": "max discharge from monitoring or from environmental permit/registration"
+    },
+    "multiple_sources": "compute each source separately (Art. 12.5)",
+    "planned_sources": "if planning already identifies future sources, add their loads using QCVN wastewater limits (Art. 12.6)"
+  },
+  "model_requirements": [
+    {
+      "id": "hydraulics_and_wq",
+      "text": "simulate hydraulic regime and water quality incl. self-purification where biochemical reactions matter"
+    },
+    {
+      "id": "calibrated_validated",
+      "text": "model calibrated and validated before use"
+    },
+    {
+      "id": "grid_sections_boundary",
+      "text": "computation grid, cross-sections, boundary conditions defined"
+    },
+    {
+      "id": "wq_inputs",
+      "text": "river network, boundary conditions, point and diffuse source data"
+    },
+    {
+      "id": "diffusion_transformation",
+      "text": "simulates diffusion and transformation of pollutants"
+    },
+    {
+      "id": "result_in_formula",
+      "text": "model result used in Ltn = Ltd - Lnn (direct form, Art. 9.3)"
+    }
+  ],
+  "result_format": {
+    "per_segment": [
+      "segment name",
+      "river name",
+      "basin name",
+      "length",
+      "province(s)"
+    ],
+    "per_parameter": "Ltn in kg/day, shown on map per parameter and per scenario",
+    "interpretation": "Ltn > 0 still has capacity; Ltn <= 0 no capacity",
+    "justification_required": [
+      "segmentation",
+      "water-use purpose",
+      "flow",
+      "parameters",
+      "method choice"
+    ],
+    "lake": "justify purpose, volume, parameters, method; state capacity per parameter"
+  },
+  "supervision": {
+    "cqc_class_rule": "C",
+    "parameter_list_mandatory": "C",
+    "formulas": "C",
+    "sampling_minimums": "B",
+    "scenario_choice": "B",
+    "model_choice": "B"
+  },
+  "linked_models": [
+    "qual2kw"
+  ],
+  "compare_with": [
+    "QCVN 08:2023/BTNMT (surface water)",
+    "QCVN 40:2025/BTNMT (industrial wastewater)"
+  ],
+  "open_questions": [
+    "Is there a Cục/Bộ guidance document or form accompanying TT 95/2025 (attachments not seen)?",
+    "Does the competent authority decide the safety margin that used to be Fs? (TT 95 has no Fs)",
+    "Transitional rule for dossiers already submitted before 2026-02-15"
+  ]
+}

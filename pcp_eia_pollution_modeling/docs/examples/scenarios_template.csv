@@ -1,0 +1,7 @@
+id,title,subtitle,emis_field,mode,rose,dirs,speeds,stabs,avgf,wind,from,stab,amb,limit,levels,soft,info,outtype,basis,aqi,basis_name,chat,kich_ban,mua,tb,nguon,plt,thr,thresholds,model
+S01,"Kịch bản 1 – chất A, trung bình 1 giờ",Sau xử lý,emis_a,env,,,1.5 3 5,B D,1,,,,,300,,,Ghi chú 1|Ghi chú 2,Nồng độ,,,,,,,,,,,,
+S02,"Kịch bản 2 – chất A, trung bình 24 giờ",Sau xử lý,emis_a,env,,,1.5 3 5,B D,0.4,,,,,300,,,,Nồng độ,,,,,,,,,,,,
+S03,"Kịch bản 3 – chất A, trung bình năm",Sau xử lý,emis_a,rose,6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 4,,,,,3,,D,,100,,1,,Nồng độ,,,,,,,,,,,,
+S04,Kịch bản 4 – một hướng gió,Sau xử lý,emis_a,single,,,,,,3,225,D,,,,,,Nồng độ,,,,,,,,,,,,
+S05,"Kịch bản 5 – SO2 1 giờ, thang AQI US EPA",Chưa cộng nền,so2,env,,,1.5 3 5,B D,1,,,,,,,,,SO2 1 h,aqi,so2_1h,,,,,,,,,,
+A01,,,,aermod,,,,,,,,,,,,,"Khí tượng AERMET: ghi rõ trạm và năm|Nồng độ do dự án gây ra, chưa cộng nền",SO2 1 giờ cao nhất,show,,,SO2,,,1 giờ cao nhất,Ống khói nhà máy (liệt kê các nguồn),/duong/dan/toi/plot_1h.plt,5,giá trị=nhãn do chuyên gia nhập; giá trị=nhãn,AERMOD (US EPA)
