@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.3
+- Qt6 check: `Qgis.MessageLevel.Warning` written fully qualified in `provider.py`.
+
 ## 0.2.2
 - Qt6 compliance: enums written fully qualified (`Type.Double`, `DataType.Numeric`, `GridStyle`, `AnnotationPosition`, `BorderSide`, `DisplayMode`, `ExportResult`, `StandardButton`), as the plugin repository's Qt6 check requires.
 
